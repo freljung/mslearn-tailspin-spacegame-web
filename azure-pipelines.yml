@@ -48,7 +48,6 @@ steps:
   inputs:
     SonarCloud: 'SonarCloud connection 1'
     organization: '$(SonarOrganization)'
-    scannerMode: 'MSBuild'
     projectKey: '$(SonarProjectKey)'
     projectName: '$(SonarProjectName)'
     projectVersion: '$(Build.BuildNumber)'
@@ -62,7 +61,7 @@ steps:
       eq(variables['Build.Reason'], 'PullRequest'),
       eq(variables['System.PullRequest.TargetBranch'], 'master')
     )
-
+    
 - task: DotNetCoreCLI@2
   displayName: 'Build the project - $(buildConfiguration)'
   inputs:
@@ -88,8 +87,7 @@ steps:
 - script: |
     reportgenerator -reports:$(Build.SourcesDirectory)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/CodeCoverage -reporttypes:HtmlInline_AzurePipelines
   displayName: 'Create code coverage report'
-  condition:
-
+  
 - task: SonarCloudAnalyze@1
   displayName: 'Run SonarCloud code analysis'
   condition: |
@@ -99,7 +97,7 @@ steps:
       eq(variables['Build.Reason'], 'PullRequest'),
       eq(variables['System.PullRequest.TargetBranch'], 'master')
     )
-
+    
 - task: SonarCloudPublish@1
   displayName: 'Publish SonarCloud quality gate results'
   condition: |
@@ -109,7 +107,7 @@ steps:
       eq(variables['Build.Reason'], 'PullRequest'),
       eq(variables['System.PullRequest.TargetBranch'], 'master')
     )
-
+    
 - task: PublishCodeCoverageResults@1
   displayName: 'Publish code coverage report'
   inputs:
